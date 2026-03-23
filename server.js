@@ -1,4 +1,7 @@
 const express = require('express');
+
+app.use(express.static('/home/ubuntu/servertls'));
+
 const path = require('path');
 const app = express();
 
