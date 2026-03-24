@@ -5,6 +5,7 @@ const app = express();
 
 app.use(express.json()); // Para poder leer JSON en el body de las peticiones
 
+// leer los archivos js y css
 app.use(express.static(__dirname));
 
 const SECRET_KEY = "mi_clave_super_secreta_123"; // En producción usa variables de entorno (.env)
