@@ -3,33 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Web Segura</title>
-    <style>
-        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #f0f2f5; }
-        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
-        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
-        #resultado { margin-top: 20px; color: #28a745; font-weight: bold; }
-    </style>
+    <title>TLS</title>
+    <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-    <div class="card">
-        <h1>🛡️ acde.duckdns.org</h1>
-        <p>Prueba de Certificado TLS y API</p>
-        <button onclick="probarAPI()">Probando Servidor</button>
-        <div id="resultado">Esperando respuesta...</div>
+
+<div class="container">
+    <h2>🔒 Acceso Interno</h2>
+    
+    <div class="input-group">
+        <input type="text" id="username" placeholder="Usuario (ej. admin)" required>
+        <input type="password" id="password" placeholder="Contraseña" required>
     </div>
 
-    <script>
-        async function probarAPI() {
-            try {
-                // Hacemos una petición al endpoint que creamos en Node
-                const respuesta = await fetch('/api/status');
-                const datos = await respuesta.json();
-                document.getElementById('resultado').innerText = datos.mensaje + " con " + datos.protocolo_interno + "interno y con " + datos.protocolo_externo + "externo";
-            } catch (error) {
-                document.getElementById('resultado').innerText = "Error en la conexión";
-            }
-        }
-    </script>
+    <div class="btn-group">
+        <button id="btnLogin" class="btn-login">Iniciar Sesión</button>
+        <button id="btnSecret" class="btn-secret">Consultar Datos Secretos</button>
+    </div>
+
+    <div id="resultado-container">
+        <span class="label">Respuesta del servidor:</span>
+        <div id="resultado">Ingrese sus credenciales para continuar...</div>
+    </div>
+</div>
+
+<script src="./script.js"></script>
 </body>
 </html>
