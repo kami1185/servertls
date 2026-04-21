@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TLS-server | Seguridad Avanzada</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="container">
+    <h2>🔒 Acceso Interno Server</h2>
+    
+    <div class="input-group">
+        <input type="text" id="username" placeholder="Usuario (ej. admin)" required>
+        <input type="password" id="password" placeholder="Contraseña" required>
+    </div>
+
+    <div class="btn-group">
+        <button id="btnLogin" class="btn-login">Iniciar Sesión</button>
+        <button id="btnSecret" class="btn-secret">Consultar Datos Secretos</button>
+    </div>
+
+    <div id="resultado-container">
+        <span class="label">Respuesta del servidor:</span>
+        <div id="resultado">Ingrese sus credenciales para continuar...</div>
+    </div>
+
+    <div id="section-2fa" style="display: none; margin-top: 25px; border-top: 1px solid #ddd; padding-top: 20px;">
+        <h3>🛡️ Configurar 2FA</h3>
+        <p style="font-size: 0.8rem; color: #666;">Escanea el QR con Google Authenticator</p>
+        
+        <button onclick="configurar2FA()" style="background-color: var(--accent-color); color: white; width: 100%; margin-bottom: 10px;">
+            Generar QR de Seguridad
+        </button>
+        
+        <div id="qr-container" style="margin: 15px 0;"></div>
+
+        <div class="input-group">
+            <input type="text" id="codigo2fa" placeholder="Código de 6 dígitos" maxlength="6">
+        </div>
+        
+        <button onclick="verificar2FA()" style="width: 100%;">Verificar Código</button>
+    </div>
+
+</div>
+
+<script src="/script.js"></script>
+<script src="/auth.js"></script>
+
+</body>
+</html>
