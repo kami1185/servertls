@@ -3,6 +3,8 @@
     "bcryptjs": "^3.0.3",
     "express": "^5.2.1",
     "init": "^0.1.2",
-    "jsonwebtoken": "^9.0.3"
+    "jsonwebtoken": "^9.0.3",
+    "qrcode": "^1.5.4",
+    "speakeasy": "^2.0.0"
   }
 }

@@ -86,3 +86,29 @@ button {
     margin-bottom: 0.5rem; 
     display: block; 
 }
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Espacio entre el usuario y la contraseña */
+    margin-bottom: 1.5rem;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%; /* Ocupa todo el ancho del contenedor */
+    padding: 14px; /* Las hace más altas y cómodas */
+    border: 2px solid #ddd;
+    border-radius: 8px; /* Bordes redondeados modernos */
+    font-size: 1rem;
+    box-sizing: border-box; /* Crucial: asegura que el padding no estire el ancho */
+    transition: border-color 0.3s ease;
+    outline: none;
+}
+
+/* Efecto visual cuando el estudiante hace clic para escribir */
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 8px rgba(0, 74, 153, 0.2);
+}

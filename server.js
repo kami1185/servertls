@@ -1,6 +1,12 @@
 const express = require('express');
+// jwt
 const jwt = require('jsonwebtoken');
 const path = require('path');
+
+// 2FA
+const speakeasy = require('speakeasy');
+const qrcode = require('qrcode');
+
 const app = express();
 
 app.use(express.json()); // Para poder leer JSON en el body de las peticiones
@@ -49,6 +55,44 @@ app.get('/api/admin-only', authenticateToken, (req, res) => {
         return res.status(403).json({ error: "No tienes permisos de Administrador" });
     }
     res.json({ mensaje: "¡Bienvenido, Administrador! Aquí están los datos sensibles." });
+});
+
+
+/************ 2FA (Autenticación de dos factores) */
+
+// 1. Ruta para CONFIGURAR 2FA (Genera el QR)
+app.post('/api/2fa/setup', authenticateToken, (req, res) => {
+    // Generamos un secreto único para el usuario
+    const secret = speakeasy.generateSecret({
+        name: `MiAppSegura (${req.user.name})`
+    });
+
+    // En una app real, guardarías 'secret.base32' en tu base de datos para este usuario
+    // Por ahora, lo enviamos al frontend para generar el QR
+    qrcode.toDataURL(secret.otpauth_url, (err, data_url) => {
+        res.json({
+            qrCode: data_url,
+            secret: secret.base32 // ¡Cuidado! Solo para fines educativos
+        });
+    });
+});
+
+// 2. Ruta para VERIFICAR el código de 6 dígitos
+app.post('/api/2fa/verify', authenticateToken, (req, res) => {
+    const { token, secret } = req.body; // El 'token' es el número de 6 dígitos de la App
+
+    const verified = speakeasy.totp.verify({
+        secret: secret,
+        encoding: 'base32',
+        token: token,
+        window: 1 // Permite un margen de error de 30 segundos (antes/después)
+    });
+
+    if (verified) {
+        res.json({ success: true, mensaje: "✅ Segundo factor verificado correctamente" });
+    } else {
+        res.status(400).json({ success: false, mensaje: "❌ Código incorrecto" });
+    }
 });
 
 // API
