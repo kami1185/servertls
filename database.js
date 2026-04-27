@@ -17,6 +17,16 @@ async function setupDB() {
         )
     `);
 
+    // await db.exec(`
+    //     CREATE TABLE IF NOT EXISTS users (
+    //         id INTEGER PRIMARY KEY AUTOINCREMENT,
+    //         username TEXT UNIQUE,
+    //         password_hash TEXT,
+    //         twofa_secret TEXT,
+    //         role TEXT DEFAULT 'user' -- Roles: 'admin' o 'user'
+    //     )
+    // `);
+
     return db;
 }
 

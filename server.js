@@ -49,7 +49,8 @@ app.post('/api/register', async (req, res) => {
 // 2. Login validando contra SQLite
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
-    const user = await db.get('SELECT * FROM users WHERE username = ?', [username]);
+    // const user = await db.get('SELECT * FROM users WHERE username = ?', [username]);
+    const user = await db.get(`SELECT * FROM users WHERE username = '${username}'`);
 
     if (user && await bcrypt.compare(password, user.password_hash)) {
         const token = jwt.sign({ name: user.username }, SECRET_KEY, { expiresIn: '1h' });
@@ -99,6 +100,43 @@ app.get('/api/status', (req, res) => {
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
+
+// ---- Pruebas -----
+app.get('/api/user/:id', authenticateToken, async (req, res) => {
+    const userId = req.params.id;
+
+    try {
+        // USO DE ? PARA EVITAR SQL INJECTION
+        // const user = await db.get('SELECT id, username, role FROM users WHERE id = ?', [userId]);
+        const user = await db.get(`SELECT * FROM users WHERE id = ${userId}`);
+
+        if (!user) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+
+        res.json(user);
+
+        // const firstUser = await db.get('SELECT id, username FROM users ORDER BY id ASC LIMIT 1');
+        
+        // if (!firstUser) {
+        //     return res.status(404).json({ error: "No hay usuarios en la base de datos" });
+        // }
+
+        // res.json({
+        //     message: "Primer usuario encontrado",
+        //     user: firstUser
+        // });
+    } catch (error) {
+        console.error(error); // Esto se verá en la terminal de Linux/EC2
+    res.status(500).json({ 
+        error: "Error en consultar la base de datos", 
+        details: error.message // <--- Esto te dirá si falta una columna o hay un fallo de sintaxis
+    });
+    }
+});
+
+// ---- Iniciar el server
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
