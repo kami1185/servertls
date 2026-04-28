@@ -44,9 +44,15 @@ async function login() {
 
 // Función para ver el secreto
 async function verSecreto() {
-    if (!miToken) {
+    // if (!miToken) {
+    //     displayResultado.innerText = "🔒 Error: Primero debes iniciar sesión.";
+    //     displayResultado.style.color = "#dc3545";
+    //     return;
+    // }
+
+    const token = localStorage.getItem('token');
+    if (!token) {
         displayResultado.innerText = "🔒 Error: Primero debes iniciar sesión.";
-        displayResultado.style.color = "#dc3545";
         return;
     }
 
@@ -63,6 +69,30 @@ async function verSecreto() {
     }
 }
 
+// Función para listar usuarios (VULNERABLE A XSS)
+async function listarUsuarios() {
+    const token = localStorage.getItem('token');
+    const listaUL = document.getElementById('lista-usuarios');
+    listaUL.innerHTML = ""; 
+
+    try {
+        const res = await fetch('/api/users', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const usuarios = await res.json();
+
+        usuarios.forEach(user => {
+            const li = document.createElement('li');
+            // USO DE innerHTML: ESTO ES LO QUE HACE QUE EL XSS FUNCIONE
+            li.innerHTML = `ID: ${user.id} - Usuario: <b>${user.username}</b>`;
+            listaUL.appendChild(li);
+        });
+    } catch (error) {
+        console.error("Error al listar:", error);
+    }
+}
+
 // Asignación de eventos a los botones
 document.getElementById('btnLogin').addEventListener('click', login);
 document.getElementById('btnSecret').addEventListener('click', verSecreto);
+document.getElementById('btnListar').addEventListener('click', listarUsuarios);

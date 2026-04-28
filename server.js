@@ -108,8 +108,11 @@ app.get('/api/user/:id', authenticateToken, async (req, res) => {
 
     try {
         // USO DE ? PARA EVITAR SQL INJECTION
-        // const user = await db.get('SELECT id, username, role FROM users WHERE id = ?', [userId]);
+        // const user = await db.get('SELECT id, username, role FROM users WHERE id = ?', [userId]); // seguro
+
         const user = await db.get(`SELECT * FROM users WHERE id = ${userId}`);
+
+        // await db.exec(`SELECT * FROM users WHERE id = ${userId}`); // db.exec inseguro
 
         if (!user) {
             return res.status(404).json({ error: "Usuario no encontrado" });
@@ -133,6 +136,16 @@ app.get('/api/user/:id', authenticateToken, async (req, res) => {
         error: "Error en consultar la base de datos", 
         details: error.message // <--- Esto te dirá si falta una columna o hay un fallo de sintaxis
     });
+    }
+});
+
+// Endpoint para obtener todos los usuarios (para la demo de XSS)
+app.get('/api/users', authenticateToken, async (req, res) => {
+    try {
+        const users = await db.all('SELECT id, username FROM users');
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ error: "Error al obtener usuarios" });
     }
 });
 
