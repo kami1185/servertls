@@ -5,8 +5,28 @@ const speakeasy = require('speakeasy');
 const qrcode = require('qrcode');
 const bcrypt = require('bcryptjs');
 const { setupDB } = require('./database'); // Importamos la conexión
+const helmet = require('helmet');
+const xss = require('xss');
 
 const app = express();
+
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            // Permitimos scripts de nuestro servidor y 'unsafe-inline' para que tus botones funcionen
+            // Si quitas 'unsafe-inline', el ataque XSS inyectado se bloquea totalmente.
+            // scriptSrc: ["'self'", "'unsafe-inline'"], 
+            scriptSrc: ["'self'"], 
+            // Permitimos que las imágenes (como el QR) y la conexión a Webhook funcionen
+            imgSrc: ["'self'", "data:", "https://webhook.site"],
+            connectSrc: ["'self'", "https://webhook.site"],
+        },
+    },
+    // Protección contra Clickjacking
+    frameguard: { action: 'deny' } 
+}));
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -37,9 +57,12 @@ const authenticateToken = (req, res, next) => {
 // 1. Registro 
 app.post('/api/register', async (req, res) => {
     const { username, password } = req.body;
+
+    const cleanUsername = xss(username);
+
     const hashedPassword = await bcrypt.hash(password, 10);
     try {
-        await db.run('INSERT INTO users (username, password_hash) VALUES (?, ?)', [username, hashedPassword]);
+        await db.run('INSERT INTO users (username, password_hash) VALUES (?, ?)', [cleanUsername, hashedPassword]);
         res.json({ mensaje: "✅ Usuario registrado con éxito" });
     } catch (e) {
         res.status(400).json({ error: "El usuario ya existe" });
@@ -105,27 +128,20 @@ app.get('/', (req, res) => {
 // ---- Pruebas -----
 app.get('/api/user/:id', authenticateToken, async (req, res) => {
     const userId = req.params.id;
-
     try {
         // USO DE ? PARA EVITAR SQL INJECTION
         // const user = await db.get('SELECT id, username, role FROM users WHERE id = ?', [userId]); // seguro
-
         const user = await db.get(`SELECT * FROM users WHERE id = ${userId}`);
-
         // await db.exec(`SELECT * FROM users WHERE id = ${userId}`); // db.exec inseguro
-
         if (!user) {
             return res.status(404).json({ error: "Usuario no encontrado" });
         }
-
         res.json(user);
 
         // const firstUser = await db.get('SELECT id, username FROM users ORDER BY id ASC LIMIT 1');
-        
         // if (!firstUser) {
         //     return res.status(404).json({ error: "No hay usuarios en la base de datos" });
         // }
-
         // res.json({
         //     message: "Primer usuario encontrado",
         //     user: firstUser

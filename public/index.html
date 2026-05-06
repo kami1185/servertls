@@ -38,7 +38,8 @@
         <h3>🛡️ Configurar 2FA</h3>
         <p style="font-size: 0.8rem; color: #666;">Escanea el QR con Google Authenticator</p>
         
-        <button onclick="configurar2FA()" style="background-color: #007bff; color: white; width: 100%; margin-bottom: 10px; border: none; padding: 10px; border-radius: 5px;">
+        <!-- <button onclick="configurar2FA()" style="background-color: #007bff; color: white; width: 100%; margin-bottom: 10px; border: none; padding: 10px; border-radius: 5px;"> -->
+        <button id="btn2FA" style="background-color: #007bff; color: white; width: 100%; margin-bottom: 10px; border: none; padding: 10px; border-radius: 5px;">
             Generar QR de Seguridad
         </button>
         
@@ -48,7 +49,8 @@
             <input type="text" id="codigo2fa" placeholder="Código de 6 dígitos" maxlength="6">
         </div>
         
-        <button onclick="verificar2FA()" style="width: 100%; padding: 10px;">Verificar Código</button>
+        <!-- <button onclick="verificar2FA()" style="width: 100%; padding: 10px;">Verificar Código</button> -->
+        <button id="verificar2FA" style="width: 100%; padding: 10px;">Verificar Código</button>
     </div>
 </div>
 

@@ -60,3 +60,6 @@ async function verificar2FA() {
         alert("Error en la verificación");
     }
 }
+
+document.getElementById('btn2FA').addEventListener('click', configurar2FA);
+document.getElementById('verificar2FA').addEventListener('click', configurar2FA);
